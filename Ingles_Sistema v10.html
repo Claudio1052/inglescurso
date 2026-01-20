@@ -1,0 +1,2498 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VoiceLearn Pro - Aprenda Inglês com Sua Voz (Resemble.ai)</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.6.2/axios.min.js"></script>
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-dark: #3730a3;
+            --secondary: #7c3aed;
+            --accent: #10b981;
+            --light: #f8fafc;
+            --dark: #1e293b;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --gray: #64748b;
+            --border-radius: 12px;
+            --box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
+            font-family: 'Segoe UI', 'Inter', sans-serif; 
+        }
+        
+        body { 
+            background: linear-gradient(135deg, #f0f9ff 0%, #f8fafc 100%);
+            color: var(--dark); 
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        .container { 
+            max-width: 1200px; 
+            margin: 0 auto; 
+            padding: 0 20px; 
+        }
+
+        /* Header */
+        header {
+            background: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .logo i {
+            color: var(--secondary);
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 5px;
+        }
+
+        .nav-link {
+            padding: 10px 20px;
+            text-decoration: none;
+            color: var(--gray);
+            border-radius: 30px;
+            transition: var(--transition);
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 16px;
+            background: var(--light);
+            border-radius: 30px;
+        }
+
+        .avatar {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        /* Main Content */
+        main {
+            padding: 40px 0;
+        }
+
+        .page {
+            display: none;
+        }
+
+        .page.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Cards */
+        .card {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 30px;
+            box-shadow: var(--box-shadow);
+            margin-bottom: 30px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 1rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(79, 70, 229, 0.3);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: var(--dark);
+            border: 2px solid #e2e8f0;
+        }
+
+        .btn-secondary:hover:not(:disabled) {
+            background: #f8fafc;
+            border-color: var(--primary);
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        /* Forms */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+
+        /* Recording */
+        .recording-circle {
+            width: 100px;
+            height: 100px;
+            background: white;
+            border: 3px solid #e2e8f0;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 20px auto;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .recording-circle:hover {
+            border-color: var(--primary);
+            transform: scale(1.05);
+        }
+
+        .recording-circle.recording {
+            border-color: var(--danger);
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
+            70% { box-shadow: 0 0 0 15px rgba(239, 68, 68, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+        }
+
+        /* Lessons */
+        .lesson-container {
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 30px;
+        }
+
+        @media (max-width: 768px) {
+            .lesson-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .lesson-content {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 30px;
+            box-shadow: var(--box-shadow);
+        }
+
+        .lesson-sidebar {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 20px;
+            box-shadow: var(--box-shadow);
+            height: fit-content;
+        }
+
+        .phrase-display {
+            background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+            padding: 30px;
+            border-radius: var(--border-radius);
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .english-phrase {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 10px;
+        }
+
+        .translation {
+            font-size: 1.2rem;
+            color: var(--gray);
+        }
+
+        /* Admin */
+        .admin-container {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            gap: 30px;
+        }
+
+        @media (max-width: 768px) {
+            .admin-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .admin-sidebar {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 20px;
+            box-shadow: var(--box-shadow);
+        }
+
+        .admin-nav {
+            list-style: none;
+        }
+
+        .admin-nav li {
+            margin-bottom: 5px;
+        }
+
+        .admin-nav a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 15px;
+            text-decoration: none;
+            color: var(--gray);
+            border-radius: 8px;
+            transition: var(--transition);
+        }
+
+        .admin-nav a:hover,
+        .admin-nav a.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .admin-content {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 30px;
+            box-shadow: var(--box-shadow);
+        }
+
+        /* Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin: 10px 0;
+        }
+
+        /* Progress */
+        .progress-bar {
+            height: 8px;
+            background: #e2e8f0;
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+
+        /* Notifications */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 10000;
+            transform: translateX(150%);
+            transition: transform 0.3s ease;
+            border-left: 4px solid var(--primary);
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification.success {
+            border-left-color: var(--success);
+        }
+
+        .notification.error {
+            border-left-color: var(--danger);
+        }
+
+        .notification.warning {
+            border-left-color: var(--warning);
+        }
+
+        /* Loading */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #e2e8f0;
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Audio Player */
+        audio {
+            width: 100%;
+            margin: 20px 0;
+            border-radius: 8px;
+        }
+
+        /* Lesson List */
+        .lesson-list {
+            list-style: none;
+        }
+
+        .lesson-item {
+            padding: 15px;
+            border-bottom: 1px solid #e2e8f0;
+            cursor: pointer;
+            transition: var(--transition);
+            border-radius: 8px;
+            margin-bottom: 5px;
+        }
+
+        .lesson-item:hover {
+            background: #f8fafc;
+        }
+
+        .lesson-item.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        /* Difficulty Badges */
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .badge-beginner {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .badge-intermediate {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .badge-advanced {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        /* Category Tags */
+        .category-tag {
+            display: inline-block;
+            padding: 4px 12px;
+            background: #e0e7ff;
+            color: var(--primary);
+            border-radius: 20px;
+            font-size: 0.85rem;
+            margin: 2px;
+        }
+
+        /* API Status */
+        .api-status {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: white;
+            padding: 10px 15px;
+            border-radius: 8px;
+            box-shadow: var(--box-shadow);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+            z-index: 999;
+        }
+
+        .api-status.connected {
+            border-left: 4px solid var(--success);
+        }
+
+        .api-status.disconnected {
+            border-left: 4px solid var(--danger);
+        }
+
+        /* Recording Meter */
+        .recording-meter {
+            height: 5px;
+            width: 80%;
+            background: #e2e8f0;
+            border-radius: 3px;
+            margin: 10px auto;
+            overflow: hidden;
+        }
+
+        .recording-level {
+            height: 100%;
+            background: linear-gradient(90deg, var(--success), var(--accent));
+            width: 0%;
+            transition: width 0.1s ease;
+        }
+    </style>
+</head>
+<body>
+    <!-- API Status -->
+    <div id="apiStatus" class="api-status connected">
+        <i class="fas fa-plug"></i>
+        <span>Resemble.ai API Conectada</span>
+    </div>
+
+    <!-- Notification System -->
+    <div id="notification" class="notification">
+        <i id="notification-icon" class="fas fa-info-circle"></i>
+        <div>
+            <div id="notification-title" style="font-weight: bold;"></div>
+            <div id="notification-message" style="font-size: 0.9rem; color: var(--gray);"></div>
+        </div>
+        <button onclick="VoiceLearn.hideNotification()" style="background: none; border: none; color: var(--gray); cursor: pointer;">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-wave-square"></i>
+                    <span>VoiceLearn Pro + Resemble.ai</span>
+                </div>
+                <nav>
+                    <ul>
+                        <li><a href="#" class="nav-link active" onclick="VoiceLearn.navigate('home')">
+                            <i class="fas fa-home"></i> Início
+                        </a></li>
+                        <li><a href="#" class="nav-link" onclick="VoiceLearn.navigate('setup')">
+                            <i class="fas fa-microphone"></i> Configurar Voz
+                        </a></li>
+                        <li><a href="#" class="nav-link" onclick="VoiceLearn.navigate('lessons')">
+                            <i class="fas fa-graduation-cap"></i> Aulas
+                        </a></li>
+                        <li><a href="#" class="nav-link" onclick="VoiceLearn.navigate('practice')">
+                            <i class="fas fa-headphones"></i> Praticar
+                        </a></li>
+                        <li><a href="#" class="nav-link" onclick="VoiceLearn.navigate('admin')">
+                            <i class="fas fa-crown"></i> Admin
+                        </a></li>
+                    </ul>
+                </nav>
+                <div class="user-info">
+                    <div class="avatar" id="userAvatar">U</div>
+                    <span id="userName">Usuário</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container">
+        <!-- Home Page -->
+        <section id="home-page" class="page active">
+            <div class="card">
+                <h1 style="margin-bottom: 20px; color: var(--primary);">
+                    <i class="fas fa-robot"></i> VoiceLearn Pro com Resemble.ai
+                </h1>
+                <p style="margin-bottom: 20px; font-size: 1.1rem; color: var(--gray);">
+                    Aprenda inglês com tecnologia de IA avançada. Síntese de voz real usando Resemble.ai API!
+                </p>
+                
+                <div style="background: linear-gradient(135deg, #4f46e5, #7c3aed); color: white; padding: 20px; border-radius: var(--border-radius); margin-bottom: 30px;">
+                    <h4 style="margin-bottom: 10px;">
+                        <i class="fas fa-bolt"></i> Resemble.ai API Ativa
+                    </h4>
+                    <p>
+                        Token: oGHRQvmNLSjt8HUSC8sguQtt<br>
+                        Status: <span id="apiStatusText" style="font-weight: bold;">Conectado</span>
+                    </p>
+                </div>
+                
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <i class="fas fa-book" style="font-size: 2rem; color: var(--primary); margin-bottom: 10px;"></i>
+                        <div class="stat-value" id="totalLessons">5</div>
+                        <div>Lições Disponíveis</div>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fas fa-check-circle" style="font-size: 2rem; color: var(--success); margin-bottom: 10px;"></i>
+                        <div class="stat-value" id="completedLessons">0</div>
+                        <div>Lições Concluídas</div>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fas fa-microphone" style="font-size: 2rem; color: var(--secondary); margin-bottom: 10px;"></i>
+                        <div class="stat-value" id="practiceCount">0</div>
+                        <div>Práticas Realizadas</div>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fas fa-chart-line" style="font-size: 2rem; color: var(--accent); margin-bottom: 10px;"></i>
+                        <div class="stat-value" id="progressPercent">0%</div>
+                        <div>Progresso Geral</div>
+                    </div>
+                </div>
+
+                <div style="margin: 40px 0;">
+                    <h2 style="margin-bottom: 20px;">Comece Agora</h2>
+                    <div class="btn-group">
+                        <button class="btn btn-primary" onclick="VoiceLearn.navigate('setup')">
+                            <i class="fas fa-microphone"></i> Configurar Minha Voz
+                        </button>
+                        <button class="btn btn-secondary" onclick="VoiceLearn.navigate('lessons')">
+                            <i class="fas fa-graduation-cap"></i> Ver Lições
+                        </button>
+                        <button class="btn btn-success" onclick="VoiceLearn.navigate('practice')">
+                            <i class="fas fa-headphones"></i> Praticar Pronúncia
+                        </button>
+                    </div>
+                </div>
+
+                <div style="background: #f0f9ff; padding: 20px; border-radius: var(--border-radius); margin-top: 30px;">
+                    <h3 style="margin-bottom: 15px;"><i class="fas fa-lightbulb"></i> Recursos com Resemble.ai</h3>
+                    <ul style="list-style: none; color: var(--gray);">
+                        <li style="margin-bottom: 10px;"><i class="fas fa-check-circle" style="color: var(--success);"></i> Síntese de voz em tempo real</li>
+                        <li style="margin-bottom: 10px;"><i class="fas fa-check-circle" style="color: var(--success);"></i> Vozes naturais em inglês</li>
+                        <li style="margin-bottom: 10px;"><i class="fas fa-check-circle" style="color: var(--success);"></i> Pronúncia autêntica</li>
+                        <li style="margin-bottom: 10px;"><i class="fas fa-check-circle" style="color: var(--success);"></i> Sistema de lições completo</li>
+                        <li><i class="fas fa-check-circle" style="color: var(--success);"></i> Prática com feedback</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Setup Page -->
+        <section id="setup-page" class="page">
+            <div class="card">
+                <h2 style="margin-bottom: 20px; color: var(--primary);">
+                    <i class="fas fa-microphone"></i> Configurar Voz com Resemble.ai
+                </h2>
+                
+                <div style="background: #f0f9ff; padding: 20px; border-radius: var(--border-radius); margin-bottom: 30px;">
+                    <h4 style="margin-bottom: 10px;">
+                        <i class="fas fa-info-circle"></i> Configuração de Voz
+                    </h4>
+                    <p style="color: var(--dark);">
+                        Selecione uma voz do Resemble.ai para as lições. A voz será usada para pronúncia correta.
+                    </p>
+                </div>
+
+                <div class="form-group">
+                    <label>Seu Nome</label>
+                    <input type="text" id="userNameInput" placeholder="Digite seu nome" value="Aluno VoiceLearn">
+                </div>
+
+                <div id="voiceSelection">
+                    <div class="form-group">
+                        <label>Selecione uma Voz do Resemble.ai</label>
+                        <select id="resembleVoice" class="form-control">
+                            <option value="">Carregando vozes...</option>
+                        </select>
+                    </div>
+
+                    <div style="text-align: center; margin: 30px 0;">
+                        <div style="width: 80px; height: 80px; background: linear-gradient(135deg, var(--primary), var(--secondary)); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px;">
+                            <i class="fas fa-robot" style="font-size: 2rem; color: white;"></i>
+                        </div>
+                        <h3>Voz Resemble.ai</h3>
+                        <p style="color: var(--gray); margin: 10px 0 20px;">
+                            Teste a voz selecionada antes de salvar.
+                        </p>
+                        <div class="btn-group">
+                            <button class="btn btn-primary" onclick="VoiceLearn.testSelectedVoice()" id="testVoiceBtn">
+                                <i class="fas fa-volume-up"></i> Testar Voz
+                            </button>
+                            <button class="btn btn-success" onclick="VoiceLearn.saveVoiceSelection()" id="saveVoiceBtn">
+                                <i class="fas fa-save"></i> Salvar Voz
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="testResult" style="display: none; margin-top: 20px;">
+                        <div class="phrase-display">
+                            <div class="english-phrase" id="testPhrase">
+                                Hello, this is a test of the Resemble.ai voice.
+                            </div>
+                        </div>
+                        <audio id="testAudio" controls style="width: 100%; margin: 20px 0;"></audio>
+                    </div>
+                </div>
+
+                <!-- Voice Created Section -->
+                <div id="voiceCreatedSection" style="display: none; margin-top: 30px;">
+                    <div style="text-align: center; padding: 30px;">
+                        <div style="width: 100px; height: 100px; background: linear-gradient(135deg, var(--primary), var(--secondary)); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px;">
+                            <i class="fas fa-robot" style="font-size: 3rem; color: white;"></i>
+                        </div>
+                        <h3>Voz Configurada com Sucesso!</h3>
+                        <p style="color: var(--gray); margin: 10px 0 30px;">
+                            Sua voz do Resemble.ai está pronta para uso.
+                        </p>
+                        
+                        <div style="background: #f8fafc; padding: 20px; border-radius: var(--border-radius); max-width: 500px; margin: 0 auto 30px;">
+                            <h4><i class="fas fa-info-circle"></i> Detalhes da Voz</h4>
+                            <div style="text-align: left; margin-top: 15px;">
+                                <p><strong>Nome:</strong> <span id="voiceName">Voz Resemble.ai</span></p>
+                                <p><strong>Status:</strong> <span style="color: var(--success); font-weight: bold;">Ativa</span></p>
+                                <p><strong>Tecnologia:</strong> Resemble.ai API</p>
+                                <p><strong>Token:</strong> oGHRQvmNLSjt8HUSC8sguQtt</p>
+                            </div>
+                        </div>
+
+                        <div class="btn-group">
+                            <button class="btn btn-primary" onclick="VoiceLearn.navigate('lessons')">
+                                <i class="fas fa-graduation-cap"></i> Começar Aulas
+                            </button>
+                            <button class="btn btn-secondary" onclick="VoiceLearn.testResembleVoice()">
+                                <i class="fas fa-volume-up"></i> Testar Novamente
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Lessons Page -->
+        <section id="lessons-page" class="page">
+            <div class="lesson-container">
+                <div class="lesson-content">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+                        <h2 style="color: var(--primary);">
+                            <i class="fas fa-graduation-cap"></i> Aulas de Pronúncia
+                        </h2>
+                        <div>
+                            <span class="badge badge-beginner" id="lessonDifficultyBadge">Iniciante</span>
+                            <span class="category-tag" id="lessonCategoryTag">Saudações</span>
+                        </div>
+                    </div>
+
+                    <div id="currentLesson">
+                        <div class="phrase-display">
+                            <div class="english-phrase" id="lessonEnglish">
+                                Hello, how are you today?
+                            </div>
+                            <div class="translation" id="lessonPortuguese">
+                                Olá, como você está hoje?
+                            </div>
+                        </div>
+
+                        <div style="background: #fef3c7; padding: 15px; border-radius: 8px; margin: 20px 0; border-left: 4px solid var(--warning);">
+                            <h4><i class="fas fa-lightbulb"></i> Dica de Pronúncia</h4>
+                            <p id="lessonTips">Pronuncie "how are you" como uma frase contínua: "hau ar iu"</p>
+                        </div>
+
+                        <div style="text-align: center; margin: 30px 0;">
+                            <button class="btn btn-primary" onclick="VoiceLearn.playLessonAudio()" id="playLessonBtn">
+                                <i class="fas fa-play"></i> Ouvir Pronúncia
+                            </button>
+                            <div id="audioLoading" style="display: none; margin-top: 10px;">
+                                <div class="loading"></div>
+                                <span style="color: var(--gray); margin-left: 10px;">Gerando áudio com Resemble.ai...</span>
+                            </div>
+                        </div>
+
+                        <div id="audioContainer" style="display: none;">
+                            <audio id="lessonAudio" controls style="width: 100%; margin: 20px 0;"></audio>
+                        </div>
+
+                        <div style="background: #f8fafc; padding: 20px; border-radius: var(--border-radius); margin-top: 30px;">
+                            <h4><i class="fas fa-pencil-alt"></i> Anotações</h4>
+                            <textarea id="lessonNotes" placeholder="Faça anotações sobre esta lição..." 
+                                      style="width: 100%; padding: 15px; border: 2px solid #e2e8f0; border-radius: 8px; margin-top: 10px; min-height: 100px;"></textarea>
+                        </div>
+
+                        <div style="display: flex; justify-content: space-between; margin-top: 30px;">
+                            <button class="btn btn-secondary" onclick="VoiceLearn.prevLesson()" id="prevLessonBtn">
+                                <i class="fas fa-chevron-left"></i> Anterior
+                            </button>
+                            <div>
+                                <span style="color: var(--gray);">Progresso: </span>
+                                <span id="lessonProgress" style="color: var(--primary); font-weight: bold;">1/5</span>
+                                <button class="btn btn-success" onclick="VoiceLearn.completeLesson()" id="completeLessonBtn" style="margin-left: 20px; padding: 8px 16px;">
+                                    <i class="fas fa-check"></i> Concluir
+                                </button>
+                            </div>
+                            <button class="btn btn-primary" onclick="VoiceLearn.nextLesson()" id="nextLessonBtn">
+                                Próxima <i class="fas fa-chevron-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="lesson-sidebar">
+                    <h3 style="margin-bottom: 20px;">Lista de Lições</h3>
+                    <ul class="lesson-list" id="lessonsList">
+                        <!-- Lessons will be populated here -->
+                    </ul>
+                    
+                    <div style="margin-top: 30px; padding-top: 20px; border-top: 2px solid #e2e8f0;">
+                        <h4 style="margin-bottom: 10px;">Seu Progresso</h4>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="sidebarProgress" style="width: 0%;"></div>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-top: 5px;">
+                            <span style="font-size: 0.9rem; color: var(--gray);" id="progressPercentText">0% concluído</span>
+                            <span style="font-size: 0.9rem; color: var(--primary); font-weight: bold;" id="completedCount">0/5</span>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top: 20px; padding-top: 20px; border-top: 2px solid #e2e8f0;">
+                        <h4 style="margin-bottom: 10px;">Voz Atual</h4>
+                        <div id="currentVoiceInfo" style="color: var(--gray); font-size: 0.9rem;">
+                            <i class="fas fa-microphone"></i> <span id="currentVoiceName">Nenhuma voz configurada</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Practice Page -->
+        <section id="practice-page" class="page">
+            <div class="card">
+                <h2 style="margin-bottom: 20px; color: var(--primary);">
+                    <i class="fas fa-headphones"></i> Praticar Pronúncia com Resemble.ai
+                </h2>
+                
+                <div style="background: #f0f9ff; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+                    <p style="color: var(--dark);">
+                        <i class="fas fa-info-circle"></i> Use a gravação real e compare com a pronúncia do Resemble.ai.
+                    </p>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-top: 20px;">
+                    <div>
+                        <h3 style="margin-bottom: 15px;"><i class="fas fa-user"></i> Sua Pronúncia</h3>
+                        <div class="phrase-display">
+                            <div class="english-phrase" id="practicePhrase">
+                                Hello, how are you?
+                            </div>
+                            <div class="translation">
+                                Pronuncie claramente
+                            </div>
+                        </div>
+
+                        <div style="text-align: center; margin: 20px 0;">
+                            <div class="recording-circle" id="practiceRecordBtn" onclick="VoiceLearn.togglePracticeRecording()">
+                                <i class="fas fa-microphone" style="font-size: 2rem;"></i>
+                            </div>
+                            <div class="recording-meter">
+                                <div class="recording-level" id="recordingLevel"></div>
+                            </div>
+                            <p id="practiceStatus" style="color: var(--gray); margin-top: 10px;">
+                                Clique para gravar
+                            </p>
+                        </div>
+
+                        <div id="practicePreview" style="display: none;">
+                            <div style="background: #f0f9ff; padding: 15px; border-radius: 8px; margin: 10px 0;">
+                                <p style="color: var(--gray);">
+                                    <i class="fas fa-info-circle"></i> Gravação concluída. Clique em "Analisar" para comparar.
+                                </p>
+                            </div>
+                            <audio id="userRecording" controls style="width: 100%; margin: 10px 0;"></audio>
+                            <div class="btn-group">
+                                <button class="btn btn-secondary" onclick="VoiceLearn.redoPractice()">
+                                    <i class="fas fa-redo"></i> Regravar
+                                </button>
+                                <button class="btn btn-primary" onclick="VoiceLearn.analyzePronunciation()" id="analyzeBtn">
+                                    <i class="fas fa-chart-line"></i> Analisar Pronúncia
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h3 style="margin-bottom: 15px;"><i class="fas fa-robot"></i> Pronúncia Correta (Resemble.ai)</h3>
+                        <div class="phrase-display">
+                            <div class="english-phrase" id="referencePhrase">
+                                Hello, how are you?
+                            </div>
+                            <div class="translation">
+                                Pronúncia de referência
+                            </div>
+                        </div>
+
+                        <div style="text-align: center; margin: 20px 0;">
+                            <button class="btn btn-primary" onclick="VoiceLearn.playReferenceAudio()" id="playReferenceBtn">
+                                <i class="fas fa-volume-up"></i> Ouvir Pronúncia Correta
+                            </button>
+                            <div id="referenceLoading" style="display: none; margin-top: 10px;">
+                                <div class="loading"></div>
+                                <span style="color: var(--gray); margin-left: 10px;">Gerando áudio...</span>
+                            </div>
+                        </div>
+                        <audio id="referenceAudio" controls style="width: 100%; margin: 10px 0; display: none;"></audio>
+
+                        <div id="analysisResult" style="display: none;">
+                            <h4><i class="fas fa-chart-bar"></i> Resultado da Análise</h4>
+                            <div style="background: #f8fafc; padding: 20px; border-radius: var(--border-radius); margin: 15px 0;">
+                                <div style="margin-bottom: 15px;">
+                                    <div style="display: flex; justify-content: space-between;">
+                                        <span>Similaridade:</span>
+                                        <span id="similarityScore" style="font-weight: bold; color: var(--primary);">85%</span>
+                                    </div>
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" id="similarityBar" style="width: 85%;"></div>
+                                    </div>
+                                </div>
+                                <div id="analysisFeedback" style="color: var(--gray);">
+                                    Sua pronúncia está muito boa! Continue praticando.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="text-align: center; margin-top: 30px;">
+                    <button class="btn btn-secondary" onclick="VoiceLearn.nextPracticePhrase()">
+                        <i class="fas fa-forward"></i> Próxima Frase de Prática
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Admin Page -->
+        <section id="admin-page" class="page">
+            <div class="admin-container">
+                <div class="admin-sidebar">
+                    <h3 style="margin-bottom: 20px; color: var(--primary);">
+                        <i class="fas fa-crown"></i> Painel Admin
+                    </h3>
+                    <ul class="admin-nav" id="adminNav">
+                        <li><a href="#" class="active" onclick="VoiceLearn.showAdminSection('dashboard')">
+                            <i class="fas fa-tachometer-alt"></i> Dashboard
+                        </a></li>
+                        <li><a href="#" onclick="VoiceLearn.showAdminSection('lessons')">
+                            <i class="fas fa-book"></i> Lições
+                        </a></li>
+                        <li><a href="#" onclick="VoiceLearn.showAdminSection('create')">
+                            <i class="fas fa-plus-circle"></i> Nova Lição
+                        </a></li>
+                        <li><a href="#" onclick="VoiceLearn.showAdminSection('settings')">
+                            <i class="fas fa-cog"></i> Configurações
+                        </a></li>
+                    </ul>
+                </div>
+
+                <div class="admin-content">
+                    <!-- Dashboard -->
+                    <div id="adminDashboard" class="admin-section">
+                        <h2 style="margin-bottom: 20px;">Dashboard Resemble.ai</h2>
+                        
+                        <div style="background: #f0f9ff; padding: 20px; border-radius: var(--border-radius); margin-bottom: 30px;">
+                            <h4 style="margin-bottom: 10px;">
+                                <i class="fas fa-bolt"></i> Status da API Resemble.ai
+                            </h4>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 15px;">
+                                <div>
+                                    <p><strong>Token:</strong> oGHRQvmNLSjt8HUSC8sguQtt</p>
+                                    <p><strong>Endpoint Síntese:</strong> https://f.cluster.resemble.ai/synthesize</p>
+                                </div>
+                                <div>
+                                    <p><strong>Status:</strong> <span id="adminApiStatus" style="color: var(--success); font-weight: bold;">Conectado</span></p>
+                                    <p><strong>Vozes Disponíveis:</strong> <span id="availableVoicesCount">5</span></p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="stats-grid">
+                            <div class="stat-card">
+                                <i class="fas fa-users" style="font-size: 2rem; color: var(--primary); margin-bottom: 10px;"></i>
+                                <div class="stat-value">1</div>
+                                <div>Usuário Ativo</div>
+                            </div>
+                            <div class="stat-card">
+                                <i class="fas fa-book" style="font-size: 2rem; color: var(--success); margin-bottom: 10px;"></i>
+                                <div class="stat-value" id="adminLessonCount">5</div>
+                                <div>Lições Criadas</div>
+                            </div>
+                            <div class="stat-card">
+                                <i class="fas fa-microphone" style="font-size: 2rem; color: var(--secondary); margin-bottom: 10px;"></i>
+                                <div class="stat-value" id="adminVoiceCount">1</div>
+                                <div>Voz Configurada</div>
+                            </div>
+                            <div class="stat-card">
+                                <i class="fas fa-chart-line" style="font-size: 2rem; color: var(--accent); margin-bottom: 10px;"></i>
+                                <div class="stat-value" id="adminProgress">0%</div>
+                                <div>Progresso Médio</div>
+                            </div>
+                        </div>
+
+                        <div style="margin-top: 40px;">
+                            <h3 style="margin-bottom: 20px;">Ações Rápidas</h3>
+                            <div class="btn-group">
+                                <button class="btn btn-primary" onclick="VoiceLearn.showAdminSection('create')">
+                                    <i class="fas fa-plus"></i> Criar Nova Lição
+                                </button>
+                                <button class="btn btn-secondary" onclick="VoiceLearn.testApiConnection()">
+                                    <i class="fas fa-plug"></i> Testar API
+                                </button>
+                                <button class="btn btn-success" onclick="VoiceLearn.exportData()">
+                                    <i class="fas fa-download"></i> Exportar Dados
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Manage Lessons -->
+                    <div id="adminLessons" class="admin-section" style="display: none;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+                            <h2>Gerenciar Lições</h2>
+                            <button class="btn btn-primary" onclick="VoiceLearn.showAdminSection('create')">
+                                <i class="fas fa-plus"></i> Nova Lição
+                            </button>
+                        </div>
+
+                        <div id="lessonsManagement">
+                            <!-- Lessons will be listed here -->
+                        </div>
+                    </div>
+
+                    <!-- Create Lesson -->
+                    <div id="adminCreate" class="admin-section" style="display: none;">
+                        <h2 style="margin-bottom: 20px;">Criar Nova Lição com Resemble.ai</h2>
+                        
+                        <div class="form-group">
+                            <label>Título da Lição *</label>
+                            <input type="text" id="lessonTitle" placeholder="Ex: Saudações Básicas">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Frase em Inglês *</label>
+                            <textarea id="lessonEnglishInput" rows="3" placeholder="Digite a frase em inglês (será usada para síntese de voz)"></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Tradução em Português *</label>
+                            <textarea id="lessonPortugueseInput" rows="3" placeholder="Digite a tradução"></textarea>
+                        </div>
+
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 20px 0;">
+                            <div class="form-group">
+                                <label>Categoria</label>
+                                <select id="lessonCategory">
+                                    <option value="greetings">Saudações</option>
+                                    <option value="restaurant">Restaurante</option>
+                                    <option value="travel">Viagens</option>
+                                    <option value="shopping">Compras</option>
+                                    <option value="work">Trabalho</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Dificuldade</label>
+                                <select id="lessonDifficulty">
+                                    <option value="beginner">Iniciante</option>
+                                    <option value="intermediate">Intermediário</option>
+                                    <option value="advanced">Avançado</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Dicas de Pronúncia</label>
+                            <textarea id="lessonTipsInput" rows="2" placeholder="Dicas para pronúncia correta..."></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Configuração de Voz</label>
+                            <div style="background: #f8fafc; padding: 15px; border-radius: 8px; margin-top: 5px;">
+                                <p style="color: var(--gray); margin-bottom: 10px;">
+                                    <i class="fas fa-info-circle"></i> O áudio será gerado usando a voz do Resemble.ai
+                                </p>
+                                <div style="display: flex; align-items: center; gap: 10px;">
+                                    <span style="color: var(--primary); font-weight: bold;" id="currentVoiceForLesson">Voz padrão Resemble.ai</span>
+                                    <button type="button" class="btn btn-secondary" onclick="VoiceLearn.previewLessonAudio()" style="padding: 5px 10px;">
+                                        <i class="fas fa-volume-up"></i> Prévia
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="btn-group" style="margin-top: 30px;">
+                            <button class="btn btn-primary" onclick="VoiceLearn.saveLesson()">
+                                <i class="fas fa-save"></i> Salvar Lição
+                            </button>
+                            <button class="btn btn-secondary" onclick="VoiceLearn.previewLesson()">
+                                <i class="fas fa-eye"></i> Visualizar
+                            </button>
+                            <button class="btn btn-danger" onclick="VoiceLearn.clearLessonForm()">
+                                <i class="fas fa-times"></i> Cancelar
+                            </button>
+                        </div>
+
+                        <div id="lessonPreview" style="display: none; margin-top: 30px; padding: 20px; background: #f8fafc; border-radius: var(--border-radius);">
+                            <h4><i class="fas fa-eye"></i> Pré-visualização</h4>
+                            <div class="phrase-display" style="margin: 15px 0;">
+                                <div class="english-phrase" id="previewEnglish"></div>
+                                <div class="translation" id="previewPortuguese"></div>
+                            </div>
+                            <div>
+                                <strong>Categoria:</strong> <span id="previewCategory"></span> | 
+                                <strong>Dificuldade:</strong> <span id="previewDifficulty" class="badge badge-beginner"></span>
+                            </div>
+                            <div style="margin-top: 15px;">
+                                <strong>Dicas:</strong> <span id="previewTips"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Settings -->
+                    <div id="adminSettings" class="admin-section" style="display: none;">
+                        <h2 style="margin-bottom: 20px;">Configurações do Sistema</h2>
+                        
+                        <div style="background: #f0f9ff; padding: 20px; border-radius: var(--border-radius); margin-bottom: 30px;">
+                            <h4 style="margin-bottom: 10px;">
+                                <i class="fas fa-bolt"></i> Configurações Resemble.ai
+                            </h4>
+                            <div class="form-group">
+                                <label>Token da API *</label>
+                                <input type="password" id="apiToken" value="oGHRQvmNLSjt8HUSC8sguQtt">
+                            </div>
+                            <div class="form-group">
+                                <label>Endpoint de Síntese</label>
+                                <input type="text" id="synthesisEndpoint" value="https://f.cluster.resemble.ai/synthesize">
+                            </div>
+                            <button class="btn btn-secondary" onclick="VoiceLearn.testApiConnection()">
+                                <i class="fas fa-plug"></i> Testar Conexão
+                            </button>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Nome da Instituição</label>
+                            <input type="text" id="institutionName" value="VoiceLearn Academy">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Idioma Padrão</label>
+                            <select id="defaultLanguage">
+                                <option value="pt-BR">Português (Brasil)</option>
+                                <option value="en-US">Inglês (EUA)</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Tempo Máximo de Gravação (segundos)</label>
+                            <input type="number" id="maxRecordingTime" value="30" min="5" max="120">
+                        </div>
+
+                        <div class="form-group">
+                            <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+                                <input type="checkbox" id="autoAdvance" checked style="width: auto;">
+                                Avançar automaticamente após conclusão
+                            </label>
+                        </div>
+
+                        <div class="btn-group" style="margin-top: 20px;">
+                            <button class="btn btn-primary" onclick="VoiceLearn.saveSettings()">
+                                <i class="fas fa-save"></i> Salvar Configurações
+                            </button>
+                            <button class="btn btn-secondary" onclick="VoiceLearn.resetSettings()">
+                                <i class="fas fa-undo"></i> Restaurar Padrão
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        // ==================== VoiceLearn Application with Resemble.ai ====================
+        const VoiceLearn = {
+            // Resemble.ai API Configuration
+            resembleConfig: {
+                apiKey: 'oGHRQvmNLSjt8HUSC8sguQtt',
+                synthesisEndpoint: 'https://f.cluster.resemble.ai/synthesize',
+                projectId: 'default', // You can change this to your project ID
+                defaultVoice: 'en-US-1' // Default voice UUID
+            },
+
+            // Available Resemble.ai Voices (will be populated from API)
+            resembleVoices: [],
+
+            // Application State
+            state: {
+                user: {
+                    name: 'Aluno VoiceLearn',
+                    selectedVoice: null,
+                    voiceConfigured: false
+                },
+                lessons: [
+                    {
+                        id: 1,
+                        title: 'Saudações Básicas',
+                        english: 'Hello, how are you today?',
+                        portuguese: 'Olá, como você está hoje?',
+                        category: 'greetings',
+                        difficulty: 'beginner',
+                        tips: 'Pronuncie "how are you" como uma frase contínua: "hau ar iu"',
+                        completed: false,
+                        notes: '',
+                        audioUrl: null
+                    },
+                    {
+                        id: 2,
+                        title: 'Apresentação',
+                        english: 'My name is [Name], what\'s your name?',
+                        portuguese: 'Meu nome é [Name], qual é o seu nome?',
+                        category: 'greetings',
+                        difficulty: 'beginner',
+                        tips: 'Pronuncie "what\'s" como "wats"',
+                        completed: false,
+                        notes: '',
+                        audioUrl: null
+                    },
+                    {
+                        id: 3,
+                        title: 'País de Origem',
+                        english: 'I\'m from Brazil, and you?',
+                        portuguese: 'Eu sou do Brasil, e você?',
+                        category: 'greetings',
+                        difficulty: 'beginner',
+                        tips: 'Pronuncie "Brazil" como "Bra-zil"',
+                        completed: false,
+                        notes: '',
+                        audioUrl: null
+                    },
+                    {
+                        id: 4,
+                        title: 'Conhecendo Pessoas',
+                        english: 'Nice to meet you!',
+                        portuguese: 'Prazer em conhecê-lo!',
+                        category: 'greetings',
+                        difficulty: 'beginner',
+                        tips: 'Pronuncie "meet you" como "mee-chu"',
+                        completed: false,
+                        notes: '',
+                        audioUrl: null
+                    },
+                    {
+                        id: 5,
+                        title: 'Pedindo para Falar Devagar',
+                        english: 'Could you speak slower, please?',
+                        portuguese: 'Você poderia falar mais devagar, por favor?',
+                        category: 'requests',
+                        difficulty: 'intermediate',
+                        tips: 'Pronuncie "slower" como "slo-wer"',
+                        completed: false,
+                        notes: '',
+                        audioUrl: null
+                    }
+                ],
+                currentLesson: 0,
+                completedLessons: [],
+                practicePhrases: [
+                    'Hello, how are you?',
+                    'Thank you very much',
+                    'Where is the bathroom?',
+                    'I would like some water',
+                    'How much does it cost?'
+                ],
+                currentPractice: 0,
+                practiceRecordings: [],
+                settings: {
+                    institutionName: 'VoiceLearn Academy',
+                    defaultLanguage: 'pt-BR',
+                    maxRecordingTime: 30,
+                    autoAdvance: true
+                },
+                apiStatus: {
+                    connected: false,
+                    lastTest: null
+                }
+            },
+
+            // Audio Recording Variables
+            mediaRecorder: null,
+            audioStream: null,
+            audioChunks: [],
+            isRecording: false,
+            recordingTimer: null,
+            recordingStartTime: null,
+            audioContext: null,
+            analyser: null,
+            microphone: null,
+
+            // Initialize Application
+            init: async function() {
+                this.loadState();
+                this.updateUserInfo();
+                this.renderLessonsList();
+                this.updateStats();
+                
+                // Load Resemble.ai voices
+                await this.loadResembleVoices();
+                
+                // Initialize audio system
+                await this.initAudioSystem();
+                
+                this.showNotification('VoiceLearn Pro Iniciado', 'Resemble.ai API conectada com sucesso!', 'success');
+            },
+
+            // Initialize Audio System
+            initAudioSystem: async function() {
+                try {
+                    // Get audio context for recording meter
+                    this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                    this.showNotification('Sistema de Áudio', 'Sistema de gravação inicializado', 'success');
+                } catch (error) {
+                    console.warn('Audio context not available:', error);
+                }
+            },
+
+            // Load Resemble.ai Voices
+            loadResembleVoices: async function() {
+                try {
+                    // In a real implementation, you would fetch voices from Resemble.ai API
+                    // For demo purposes, we'll use some common voices
+                    this.resembleVoices = [
+                        { uuid: 'en-US-1', name: 'Amanda (US English)', language: 'en-US', gender: 'female' },
+                        { uuid: 'en-US-2', name: 'John (US English)', language: 'en-US', gender: 'male' },
+                        { uuid: 'en-GB-1', name: 'Emily (UK English)', language: 'en-GB', gender: 'female' },
+                        { uuid: 'en-AU-1', name: 'Olivia (Australian)', language: 'en-AU', gender: 'female' },
+                        { uuid: 'en-IN-1', name: 'Raj (Indian English)', language: 'en-IN', gender: 'male' }
+                    ];
+                    
+                    // Populate voice select
+                    const voiceSelect = document.getElementById('resembleVoice');
+                    if (voiceSelect) {
+                        voiceSelect.innerHTML = '<option value="">Selecione uma voz...</option>' +
+                            this.resembleVoices.map(voice => 
+                                `<option value="${voice.uuid}">${voice.name} (${voice.gender})</option>`
+                            ).join('');
+                        
+                        // Select default voice if user has one
+                        if (this.state.user.selectedVoice) {
+                            voiceSelect.value = this.state.user.selectedVoice;
+                        }
+                    }
+                    
+                    // Update voice info in lessons sidebar
+                    this.updateVoiceInfo();
+                    
+                    this.state.apiStatus.connected = true;
+                    this.updateApiStatus();
+                    
+                } catch (error) {
+                    console.error('Error loading voices:', error);
+                    this.state.apiStatus.connected = false;
+                    this.updateApiStatus();
+                    this.showNotification('API Error', 'Could not load Resemble.ai voices', 'error');
+                }
+            },
+
+            // Update API Status Display
+            updateApiStatus: function() {
+                const apiStatusEl = document.getElementById('apiStatus');
+                const apiStatusText = document.getElementById('apiStatusText');
+                const adminApiStatus = document.getElementById('adminApiStatus');
+                
+                if (this.state.apiStatus.connected) {
+                    apiStatusEl.className = 'api-status connected';
+                    apiStatusEl.innerHTML = '<i class="fas fa-plug"></i> <span>Resemble.ai API Conectada</span>';
+                    if (apiStatusText) apiStatusText.textContent = 'Conectado';
+                    if (adminApiStatus) {
+                        adminApiStatus.textContent = 'Conectado';
+                        adminApiStatus.style.color = 'var(--success)';
+                    }
+                } else {
+                    apiStatusEl.className = 'api-status disconnected';
+                    apiStatusEl.innerHTML = '<i class="fas fa-unplug"></i> <span>API Desconectada</span>';
+                    if (apiStatusText) apiStatusText.textContent = 'Desconectado';
+                    if (adminApiStatus) {
+                        adminApiStatus.textContent = 'Desconectado';
+                        adminApiStatus.style.color = 'var(--danger)';
+                    }
+                }
+            },
+
+            // Update Voice Info Display
+            updateVoiceInfo: function() {
+                const currentVoiceInfo = document.getElementById('currentVoiceInfo');
+                const currentVoiceName = document.getElementById('currentVoiceName');
+                const currentVoiceForLesson = document.getElementById('currentVoiceForLesson');
+                
+                if (this.state.user.selectedVoice && this.state.user.voiceConfigured) {
+                    const voice = this.resembleVoices.find(v => v.uuid === this.state.user.selectedVoice);
+                    const voiceName = voice ? voice.name : 'Voz Resemble.ai';
+                    
+                    if (currentVoiceInfo) {
+                        currentVoiceInfo.innerHTML = `<i class="fas fa-microphone"></i> <span>${voiceName}</span>`;
+                    }
+                    if (currentVoiceName) {
+                        currentVoiceName.textContent = voiceName;
+                    }
+                    if (currentVoiceForLesson) {
+                        currentVoiceForLesson.textContent = voiceName;
+                    }
+                } else {
+                    if (currentVoiceInfo) {
+                        currentVoiceInfo.innerHTML = '<i class="fas fa-microphone-slash"></i> <span>Nenhuma voz configurada</span>';
+                    }
+                    if (currentVoiceName) {
+                        currentVoiceName.textContent = 'Nenhuma voz configurada';
+                    }
+                    if (currentVoiceForLesson) {
+                        currentVoiceForLesson.textContent = 'Voz padrão Resemble.ai';
+                    }
+                }
+            },
+
+            // Navigation
+            navigate: function(page) {
+                // Hide all pages
+                document.querySelectorAll('.page').forEach(p => p.style.display = 'none');
+                document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+                
+                // Show selected page
+                document.getElementById(page + '-page').style.display = 'block';
+                
+                // Update active nav link
+                document.querySelectorAll('.nav-link').forEach(link => {
+                    if (link.textContent.includes(this.getPageName(page))) {
+                        link.classList.add('active');
+                    }
+                });
+
+                // Page-specific initialization
+                switch(page) {
+                    case 'home':
+                        this.updateStats();
+                        break;
+                    case 'setup':
+                        this.loadResembleVoices();
+                        break;
+                    case 'lessons':
+                        this.loadLesson(this.state.currentLesson);
+                        break;
+                    case 'practice':
+                        this.loadPracticePhrase();
+                        break;
+                    case 'admin':
+                        this.showAdminSection('dashboard');
+                        break;
+                }
+            },
+
+            getPageName: function(page) {
+                const pages = {
+                    'home': 'Início',
+                    'setup': 'Configurar Voz',
+                    'lessons': 'Aulas',
+                    'practice': 'Praticar',
+                    'admin': 'Admin'
+                };
+                return pages[page] || page;
+            },
+
+            // State Management
+            saveState: function() {
+                try {
+                    localStorage.setItem('voiceLearnState', JSON.stringify(this.state));
+                    return true;
+                } catch (e) {
+                    console.error('Error saving state:', e);
+                    return false;
+                }
+            },
+
+            loadState: function() {
+                try {
+                    const saved = localStorage.getItem('voiceLearnState');
+                    if (saved) {
+                        const parsed = JSON.parse(saved);
+                        // Merge with default state to ensure all properties exist
+                        this.state = { ...this.state, ...parsed };
+                    }
+                } catch (e) {
+                    console.error('Error loading state:', e);
+                }
+            },
+
+            // User Management
+            updateUserInfo: function() {
+                const userName = this.state.user.name;
+                document.getElementById('userName').textContent = userName;
+                document.getElementById('userAvatar').textContent = userName.charAt(0).toUpperCase();
+                document.getElementById('userNameInput').value = userName;
+            },
+
+            // Voice Selection Functions
+            testSelectedVoice: async function() {
+                const voiceSelect = document.getElementById('resembleVoice');
+                const voiceId = voiceSelect.value;
+                
+                if (!voiceId) {
+                    this.showNotification('Atenção', 'Selecione uma voz primeiro', 'warning');
+                    return;
+                }
+                
+                const testBtn = document.getElementById('testVoiceBtn');
+                testBtn.disabled = true;
+                testBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Testando...';
+                
+                try {
+                    const text = "Hello, this is a test of the Resemble.ai voice synthesis.";
+                    const audioUrl = await this.generateResembleAudio(text, voiceId);
+                    
+                    document.getElementById('testResult').style.display = 'block';
+                    const audio = document.getElementById('testAudio');
+                    audio.src = audioUrl;
+                    
+                    this.showNotification('Sucesso', 'Voz testada com sucesso', 'success');
+                } catch (error) {
+                    this.showNotification('Erro', 'Falha ao testar voz: ' + error.message, 'error');
+                } finally {
+                    testBtn.disabled = false;
+                    testBtn.innerHTML = '<i class="fas fa-volume-up"></i> Testar Voz';
+                }
+            },
+
+            saveVoiceSelection: function() {
+                const voiceSelect = document.getElementById('resembleVoice');
+                const voiceId = voiceSelect.value;
+                
+                if (!voiceId) {
+                    this.showNotification('Erro', 'Selecione uma voz para continuar', 'error');
+                    return;
+                }
+                
+                // Update user info if changed
+                const newName = document.getElementById('userNameInput').value.trim();
+                if (newName && newName !== this.state.user.name) {
+                    this.state.user.name = newName;
+                    this.updateUserInfo();
+                }
+                
+                this.state.user.selectedVoice = voiceId;
+                this.state.user.voiceConfigured = true;
+                this.saveState();
+                
+                // Show success section
+                document.getElementById('voiceSelection').style.display = 'none';
+                document.getElementById('voiceCreatedSection').style.display = 'block';
+                
+                const voice = this.resembleVoices.find(v => v.uuid === voiceId);
+                document.getElementById('voiceName').textContent = voice ? voice.name : 'Voz Resemble.ai';
+                
+                this.updateVoiceInfo();
+                this.showNotification('Sucesso', 'Voz configurada com sucesso', 'success');
+            },
+
+            testResembleVoice: async function() {
+                if (!this.state.user.selectedVoice) return;
+                
+                const text = "Hello, I'm ready to help you learn English with Resemble.ai technology.";
+                try {
+                    const audioUrl = await this.generateResembleAudio(text, this.state.user.selectedVoice);
+                    const audio = new Audio(audioUrl);
+                    audio.play();
+                    
+                    this.showNotification('Teste de Voz', 'Reproduzindo voz Resemble.ai...', 'info');
+                } catch (error) {
+                    this.showNotification('Erro', 'Falha ao testar voz: ' + error.message, 'error');
+                }
+            },
+
+            // Resemble.ai Audio Generation
+            generateResembleAudio: async function(text, voiceUuid = null) {
+                const voiceId = voiceUuid || this.state.user.selectedVoice || this.resembleConfig.defaultVoice;
+                
+                try {
+                    const response = await axios.post(this.resembleConfig.synthesisEndpoint, {
+                        data: {
+                            voice_uuid: voiceId,
+                            project_uuid: this.resembleConfig.projectId,
+                            text: text,
+                            format: 'mp3',
+                            sample_rate: 22050
+                        }
+                    }, {
+                        headers: {
+                            'Authorization': `Bearer ${this.resembleConfig.apiKey}`,
+                            'Content-Type': 'application/json'
+                        },
+                        timeout: 30000 // 30 seconds timeout
+                    });
+                    
+                    if (response.data && response.data.audio_url) {
+                        return response.data.audio_url;
+                    } else {
+                        throw new Error('No audio URL in response');
+                    }
+                } catch (error) {
+                    console.error('Resemble.ai API Error:', error);
+                    
+                    // Fallback to browser synthesis if API fails
+                    if ('speechSynthesis' in window) {
+                        this.showNotification('Aviso', 'Usando síntese do navegador como fallback', 'warning');
+                        this.speakWithBrowser(text);
+                        return null;
+                    }
+                    
+                    throw new Error('Failed to generate audio: ' + (error.message || 'Unknown error'));
+                }
+            },
+
+            // Lessons Management
+            renderLessonsList: function() {
+                const list = document.getElementById('lessonsList');
+                list.innerHTML = '';
+                
+                this.state.lessons.forEach((lesson, index) => {
+                    const li = document.createElement('li');
+                    li.className = 'lesson-item';
+                    if (index === this.state.currentLesson) {
+                        li.classList.add('active');
+                    }
+                    
+                    const difficultyClass = `badge badge-${lesson.difficulty}`;
+                    const difficultyText = lesson.difficulty === 'beginner' ? 'Iniciante' : 
+                                          lesson.difficulty === 'intermediate' ? 'Intermediário' : 'Avançado';
+                    
+                    li.innerHTML = `
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <div style="font-weight: ${index === this.state.currentLesson ? 'bold' : 'normal'}; margin-bottom: 5px;">
+                                    ${lesson.title}
+                                </div>
+                                <div style="font-size: 0.85rem; color: var(--gray);">
+                                    <span class="${difficultyClass}">${difficultyText}</span>
+                                    <span class="category-tag">${this.getCategoryName(lesson.category)}</span>
+                                </div>
+                            </div>
+                            ${lesson.completed ? '<i class="fas fa-check-circle" style="color: var(--success);"></i>' : ''}
+                        </div>
+                    `;
+                    
+                    li.onclick = () => {
+                        this.loadLesson(index);
+                    };
+                    
+                    list.appendChild(li);
+                });
+                
+                this.updateProgress();
+            },
+
+            updateProgress: function() {
+                const completed = this.state.lessons.filter(l => l.completed).length;
+                const total = this.state.lessons.length;
+                const progress = Math.round((completed / total) * 100);
+                
+                document.getElementById('sidebarProgress').style.width = progress + '%';
+                document.getElementById('progressPercentText').textContent = progress + '% concluído';
+                document.getElementById('completedCount').textContent = `${completed}/${total}`;
+            },
+
+            loadLesson: function(index) {
+                this.state.currentLesson = index;
+                const lesson = this.state.lessons[index];
+                
+                // Update lesson display
+                const englishText = lesson.english.replace('[Name]', this.state.user.name);
+                const portugueseText = lesson.portuguese.replace('[Name]', this.state.user.name);
+                
+                document.getElementById('lessonEnglish').textContent = englishText;
+                document.getElementById('lessonPortuguese').textContent = portugueseText;
+                document.getElementById('lessonTips').textContent = lesson.tips;
+                document.getElementById('lessonProgress').textContent = `${index + 1}/${this.state.lessons.length}`;
+                
+                // Update badges
+                const difficultyClass = `badge badge-${lesson.difficulty}`;
+                const difficultyText = lesson.difficulty === 'beginner' ? 'Iniciante' : 
+                                      lesson.difficulty === 'intermediate' ? 'Intermediário' : 'Avançado';
+                
+                document.getElementById('lessonDifficultyBadge').className = difficultyClass;
+                document.getElementById('lessonDifficultyBadge').textContent = difficultyText;
+                document.getElementById('lessonCategoryTag').textContent = this.getCategoryName(lesson.category);
+                
+                // Update buttons
+                document.getElementById('prevLessonBtn').disabled = index === 0;
+                document.getElementById('nextLessonBtn').disabled = index === this.state.lessons.length - 1;
+                document.getElementById('completeLessonBtn').disabled = lesson.completed;
+                document.getElementById('completeLessonBtn').innerHTML = lesson.completed ? 
+                    '<i class="fas fa-check-double"></i> Concluída' : 
+                    '<i class="fas fa-check"></i> Concluir';
+                
+                // Update notes
+                document.getElementById('lessonNotes').value = lesson.notes || '';
+                document.getElementById('lessonNotes').oninput = (e) => {
+                    this.state.lessons[index].notes = e.target.value;
+                    this.saveState();
+                };
+                
+                // Update lesson list
+                this.renderLessonsList();
+                
+                // Hide audio container
+                document.getElementById('audioContainer').style.display = 'none';
+                document.getElementById('audioLoading').style.display = 'none';
+            },
+
+            playLessonAudio: async function() {
+                const lesson = this.state.lessons[this.state.currentLesson];
+                const text = lesson.english.replace('[Name]', this.state.user.name);
+                
+                // Check if voice is configured
+                if (!this.state.user.voiceConfigured) {
+                    this.showNotification('Atenção', 'Configure uma voz primeiro na página de Configuração', 'warning');
+                    this.navigate('setup');
+                    return;
+                }
+                
+                // Show loading
+                document.getElementById('playLessonBtn').disabled = true;
+                document.getElementById('playLessonBtn').innerHTML = '<i class="fas fa-spinner fa-spin"></i> Gerando...';
+                document.getElementById('audioLoading').style.display = 'block';
+                
+                try {
+                    const audioUrl = await this.generateResembleAudio(text);
+                    
+                    if (audioUrl) {
+                        const audio = document.getElementById('lessonAudio');
+                        audio.src = audioUrl;
+                        document.getElementById('audioContainer').style.display = 'block';
+                        audio.play();
+                        
+                        this.showNotification('Áudio Gerado', 'Reproduzindo pronúncia do Resemble.ai', 'success');
+                    } else {
+                        // Browser fallback already handled in generateResembleAudio
+                    }
+                } catch (error) {
+                    this.showNotification('Erro', 'Falha ao gerar áudio: ' + error.message, 'error');
+                } finally {
+                    document.getElementById('playLessonBtn').disabled = false;
+                    document.getElementById('playLessonBtn').innerHTML = '<i class="fas fa-play"></i> Ouvir Pronúncia';
+                    document.getElementById('audioLoading').style.display = 'none';
+                }
+            },
+
+            completeLesson: function() {
+                const index = this.state.currentLesson;
+                if (!this.state.lessons[index].completed) {
+                    this.state.lessons[index].completed = true;
+                    if (!this.state.completedLessons.includes(index)) {
+                        this.state.completedLessons.push(index);
+                    }
+                    
+                    this.saveState();
+                    this.loadLesson(index);
+                    this.updateStats();
+                    
+                    this.showNotification('Parabéns!', 'Lição concluída com sucesso', 'success');
+                    
+                    // Auto-advance if enabled
+                    if (this.state.settings.autoAdvance && index < this.state.lessons.length - 1) {
+                        setTimeout(() => {
+                            this.nextLesson();
+                        }, 1000);
+                    }
+                }
+            },
+
+            prevLesson: function() {
+                if (this.state.currentLesson > 0) {
+                    this.loadLesson(this.state.currentLesson - 1);
+                }
+            },
+
+            nextLesson: function() {
+                if (this.state.currentLesson < this.state.lessons.length - 1) {
+                    this.loadLesson(this.state.currentLesson + 1);
+                } else {
+                    this.showNotification('Parabéns!', 'Você completou todas as lições', 'success');
+                }
+            },
+
+            // Practice Functions
+            loadPracticePhrase: function() {
+                const phrase = this.state.practicePhrases[this.state.currentPractice];
+                document.getElementById('practicePhrase').textContent = phrase;
+                document.getElementById('referencePhrase').textContent = phrase;
+            },
+
+            togglePracticeRecording: async function() {
+                if (this.isRecording) {
+                    this.stopPracticeRecording();
+                } else {
+                    await this.startPracticeRecording();
+                }
+            },
+
+            startPracticeRecording: async function() {
+                try {
+                    this.audioStream = await navigator.mediaDevices.getUserMedia({ 
+                        audio: {
+                            echoCancellation: true,
+                            noiseSuppression: true,
+                            sampleRate: 44100
+                        } 
+                    });
+                    
+                    // Setup audio analysis for recording meter
+                    if (this.audioContext) {
+                        this.microphone = this.audioContext.createMediaStreamSource(this.audioStream);
+                        this.analyser = this.audioContext.createAnalyser();
+                        this.analyser.fftSize = 256;
+                        this.microphone.connect(this.analyser);
+                        
+                        this.updateRecordingMeter();
+                    }
+                    
+                    this.mediaRecorder = new MediaRecorder(this.audioStream);
+                    this.audioChunks = [];
+                    
+                    this.mediaRecorder.ondataavailable = (event) => {
+                        this.audioChunks.push(event.data);
+                    };
+                    
+                    this.mediaRecorder.onstop = () => {
+                        const audioBlob = new Blob(this.audioChunks, { type: 'audio/webm' });
+                        const audioUrl = URL.createObjectURL(audioBlob);
+                        document.getElementById('userRecording').src = audioUrl;
+                    };
+                    
+                    this.mediaRecorder.start();
+                    this.isRecording = true;
+                    
+                    // Update UI
+                    document.getElementById('practiceRecordBtn').classList.add('recording');
+                    document.getElementById('practiceStatus').textContent = 'Gravando... Clique para parar';
+                    
+                    this.showNotification('Gravação', 'Gravando sua pronúncia...', 'info');
+                    
+                } catch (error) {
+                    console.error('Error starting recording:', error);
+                    this.showNotification('Erro de Gravação', 'Não foi possível acessar o microfone', 'error');
+                }
+            },
+
+            updateRecordingMeter: function() {
+                if (!this.isRecording || !this.analyser) return;
+                
+                const dataArray = new Uint8Array(this.analyser.frequencyBinCount);
+                this.analyser.getByteFrequencyData(dataArray);
+                
+                let sum = 0;
+                for (let i = 0; i < dataArray.length; i++) {
+                    sum += dataArray[i];
+                }
+                const average = sum / dataArray.length;
+                
+                const level = Math.min(100, average);
+                document.getElementById('recordingLevel').style.width = level + '%';
+                
+                requestAnimationFrame(() => this.updateRecordingMeter());
+            },
+
+            stopPracticeRecording: function() {
+                if (this.mediaRecorder && this.isRecording) {
+                    this.mediaRecorder.stop();
+                    this.isRecording = false;
+                    
+                    // Stop all tracks
+                    if (this.audioStream) {
+                        this.audioStream.getTracks().forEach(track => track.stop());
+                    }
+                    
+                    // Update UI
+                    document.getElementById('practiceRecordBtn').classList.remove('recording');
+                    document.getElementById('practiceStatus').textContent = 'Gravação concluída';
+                    document.getElementById('practicePreview').style.display = 'block';
+                    document.getElementById('recordingLevel').style.width = '0%';
+                    
+                    this.showNotification('Gravação', 'Gravação concluída com sucesso', 'success');
+                }
+            },
+
+            redoPractice: function() {
+                document.getElementById('practicePreview').style.display = 'none';
+                document.getElementById('practiceStatus').textContent = 'Clique para gravar';
+            },
+
+            playReferenceAudio: async function() {
+                const phrase = this.state.practicePhrases[this.state.currentPractice];
+                
+                // Check if voice is configured
+                if (!this.state.user.voiceConfigured) {
+                    this.showNotification('Atenção', 'Configure uma voz primeiro na página de Configuração', 'warning');
+                    this.navigate('setup');
+                    return;
+                }
+                
+                const playBtn = document.getElementById('playReferenceBtn');
+                const loadingDiv = document.getElementById('referenceLoading');
+                
+                playBtn.disabled = true;
+                playBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Gerando...';
+                loadingDiv.style.display = 'block';
+                
+                try {
+                    const audioUrl = await this.generateResembleAudio(phrase);
+                    
+                    if (audioUrl) {
+                        const audio = document.getElementById('referenceAudio');
+                        audio.src = audioUrl;
+                        audio.style.display = 'block';
+                        audio.play();
+                        
+                        this.showNotification('Áudio de Referência', 'Reproduzindo pronúncia correta', 'success');
+                    }
+                } catch (error) {
+                    this.showNotification('Erro', 'Falha ao gerar áudio: ' + error.message, 'error');
+                } finally {
+                    playBtn.disabled = false;
+                    playBtn.innerHTML = '<i class="fas fa-volume-up"></i> Ouvir Pronúncia Correta';
+                    loadingDiv.style.display = 'none';
+                }
+            },
+
+            analyzePronunciation: function() {
+                // In a real implementation, you would upload the recording to a server
+                // and compare it with the reference audio using audio analysis APIs
+                // For demo purposes, we'll simulate the analysis
+                
+                const analyzeBtn = document.getElementById('analyzeBtn');
+                analyzeBtn.disabled = true;
+                analyzeBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Analisando...';
+                
+                // Simulate API call delay
+                setTimeout(() => {
+                    const similarity = Math.floor(Math.random() * 30) + 70; // 70-100%
+                    
+                    document.getElementById('similarityScore').textContent = similarity + '%';
+                    document.getElementById('similarityBar').style.width = similarity + '%';
+                    
+                    let feedback = '';
+                    if (similarity >= 90) feedback = 'Excelente pronúncia! Perfeito!';
+                    else if (similarity >= 80) feedback = 'Muito boa pronúncia! Continue assim.';
+                    else if (similarity >= 70) feedback = 'Boa pronúncia, mas pode melhorar.';
+                    else feedback = 'Pratique um pouco mais.';
+                    
+                    document.getElementById('analysisFeedback').textContent = feedback;
+                    document.getElementById('analysisResult').style.display = 'block';
+                    
+                    analyzeBtn.disabled = false;
+                    analyzeBtn.innerHTML = '<i class="fas fa-chart-line"></i> Analisar Pronúncia';
+                    
+                    this.showNotification('Análise Concluída', `Similaridade: ${similarity}%`, 'success');
+                }, 2000);
+            },
+
+            nextPracticePhrase: function() {
+                this.state.currentPractice = (this.state.currentPractice + 1) % this.state.practicePhrases.length;
+                this.loadPracticePhrase();
+                document.getElementById('practicePreview').style.display = 'none';
+                document.getElementById('analysisResult').style.display = 'none';
+                document.getElementById('referenceAudio').style.display = 'none';
+                document.getElementById('practiceStatus').textContent = 'Clique para gravar';
+            },
+
+            // Admin Functions
+            showAdminSection: function(section) {
+                // Hide all sections
+                document.querySelectorAll('.admin-section').forEach(s => s.style.display = 'none');
+                document.querySelectorAll('.admin-nav a').forEach(a => a.classList.remove('active'));
+                
+                // Show selected section
+                const sectionId = 'admin' + section.charAt(0).toUpperCase() + section.slice(1);
+                document.getElementById(sectionId).style.display = 'block';
+                
+                // Update nav
+                document.querySelectorAll('.admin-nav a').forEach(a => {
+                    if (a.textContent.includes(this.getAdminSectionName(section))) {
+                        a.classList.add('active');
+                    }
+                });
+                
+                // Load section data
+                switch(section) {
+                    case 'lessons':
+                        this.renderAdminLessons();
+                        break;
+                    case 'dashboard':
+                        this.updateAdminStats();
+                        break;
+                    case 'settings':
+                        this.loadSettingsForm();
+                        break;
+                }
+            },
+
+            getAdminSectionName: function(section) {
+                const sections = {
+                    'dashboard': 'Dashboard',
+                    'lessons': 'Lições',
+                    'create': 'Nova Lição',
+                    'settings': 'Configurações'
+                };
+                return sections[section] || section;
+            },
+
+            updateAdminStats: function() {
+                document.getElementById('adminLessonCount').textContent = this.state.lessons.length;
+                document.getElementById('adminVoiceCount').textContent = this.state.user.voiceConfigured ? '1' : '0';
+                document.getElementById('availableVoicesCount').textContent = this.resembleVoices.length;
+                
+                const completed = this.state.lessons.filter(l => l.completed).length;
+                const total = this.state.lessons.length;
+                const progress = Math.round((completed / total) * 100);
+                document.getElementById('adminProgress').textContent = progress + '%';
+            },
+
+            renderAdminLessons: function() {
+                const container = document.getElementById('lessonsManagement');
+                container.innerHTML = '';
+                
+                if (this.state.lessons.length === 0) {
+                    container.innerHTML = '<p style="color: var(--gray); text-align: center; padding: 40px;">Nenhuma lição criada ainda.</p>';
+                    return;
+                }
+                
+                this.state.lessons.forEach((lesson, index) => {
+                    const div = document.createElement('div');
+                    div.className = 'lesson-item';
+                    div.style.cursor = 'default';
+                    
+                    const difficultyClass = `badge badge-${lesson.difficulty}`;
+                    const difficultyText = lesson.difficulty === 'beginner' ? 'Iniciante' : 
+                                          lesson.difficulty === 'intermediate' ? 'Intermediário' : 'Avançado';
+                    
+                    div.innerHTML = `
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div style="flex: 1;">
+                                <div style="font-weight: bold; margin-bottom: 5px;">${lesson.title}</div>
+                                <div style="color: var(--gray); margin-bottom: 5px;">${lesson.english}</div>
+                                <div>
+                                    <span class="${difficultyClass}">${difficultyText}</span>
+                                    <span class="category-tag">${this.getCategoryName(lesson.category)}</span>
+                                    ${lesson.completed ? 
+                                        '<span style="color: var(--success); font-size: 0.9rem; margin-left: 10px;"><i class="fas fa-check-circle"></i> Concluída</span>' : 
+                                        '<span style="color: var(--gray); font-size: 0.9rem; margin-left: 10px;"><i class="fas fa-clock"></i> Pendente</span>'}
+                                </div>
+                            </div>
+                            <div class="btn-group">
+                                <button class="btn btn-secondary" onclick="VoiceLearn.editLesson(${index})" style="padding: 5px 10px;">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn btn-danger" onclick="VoiceLearn.deleteLesson(${index})" style="padding: 5px 10px;">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                    
+                    container.appendChild(div);
+                });
+            },
+
+            previewLesson: function() {
+                const english = document.getElementById('lessonEnglishInput').value.trim();
+                const portuguese = document.getElementById('lessonPortugueseInput').value.trim();
+                const category = document.getElementById('lessonCategory').value;
+                const difficulty = document.getElementById('lessonDifficulty').value;
+                const tips = document.getElementById('lessonTipsInput').value.trim();
+                
+                if (!english || !portuguese) {
+                    this.showNotification('Atenção', 'Preencha a frase e a tradução para visualizar', 'warning');
+                    return;
+                }
+                
+                document.getElementById('previewEnglish').textContent = english;
+                document.getElementById('previewPortuguese').textContent = portuguese;
+                document.getElementById('previewCategory').textContent = this.getCategoryName(category);
+                
+                const difficultyText = difficulty === 'beginner' ? 'Iniciante' : 
+                                      difficulty === 'intermediate' ? 'Intermediário' : 'Avançado';
+                const difficultyClass = `badge badge-${difficulty}`;
+                
+                document.getElementById('previewDifficulty').className = difficultyClass;
+                document.getElementById('previewDifficulty').textContent = difficultyText;
+                document.getElementById('previewTips').textContent = tips || 'Sem dicas adicionais';
+                
+                document.getElementById('lessonPreview').style.display = 'block';
+            },
+
+            previewLessonAudio: async function() {
+                const english = document.getElementById('lessonEnglishInput').value.trim();
+                if (!english) {
+                    this.showNotification('Atenção', 'Digite uma frase em inglês primeiro', 'warning');
+                    return;
+                }
+                
+                if (!this.state.user.voiceConfigured) {
+                    this.showNotification('Atenção', 'Configure uma voz primeiro', 'warning');
+                    return;
+                }
+                
+                try {
+                    const audioUrl = await this.generateResembleAudio(english);
+                    if (audioUrl) {
+                        const audio = new Audio(audioUrl);
+                        audio.play();
+                        this.showNotification('Prévia de Áudio', 'Reproduzindo...', 'info');
+                    }
+                } catch (error) {
+                    this.showNotification('Erro', 'Falha ao gerar prévia: ' + error.message, 'error');
+                }
+            },
+
+            saveLesson: function() {
+                const title = document.getElementById('lessonTitle').value.trim();
+                const english = document.getElementById('lessonEnglishInput').value.trim();
+                const portuguese = document.getElementById('lessonPortugueseInput').value.trim();
+                const category = document.getElementById('lessonCategory').value;
+                const difficulty = document.getElementById('lessonDifficulty').value;
+                const tips = document.getElementById('lessonTipsInput').value.trim();
+                
+                if (!title || !english || !portuguese) {
+                    this.showNotification('Erro', 'Preencha todos os campos obrigatórios (*)', 'error');
+                    return;
+                }
+                
+                const newLesson = {
+                    id: Date.now(),
+                    title: title,
+                    english: english,
+                    portuguese: portuguese,
+                    category: category,
+                    difficulty: difficulty,
+                    tips: tips,
+                    completed: false,
+                    notes: '',
+                    audioUrl: null
+                };
+                
+                this.state.lessons.push(newLesson);
+                this.saveState();
+                
+                this.showNotification('Sucesso', 'Lição criada com sucesso!', 'success');
+                this.clearLessonForm();
+                this.showAdminSection('lessons');
+                this.renderLessonsList();
+            },
+
+            editLesson: function(index) {
+                const lesson = this.state.lessons[index];
+                
+                document.getElementById('lessonTitle').value = lesson.title;
+                document.getElementById('lessonEnglishInput').value = lesson.english;
+                document.getElementById('lessonPortugueseInput').value = lesson.portuguese;
+                document.getElementById('lessonCategory').value = lesson.category;
+                document.getElementById('lessonDifficulty').value = lesson.difficulty;
+                document.getElementById('lessonTipsInput').value = lesson.tips;
+                
+                this.showAdminSection('create');
+                this.previewLesson();
+                
+                // Store index for update
+                document.getElementById('lessonTitle').dataset.editIndex = index;
+            },
+
+            deleteLesson: function(index) {
+                if (confirm('Tem certeza que deseja excluir esta lição?')) {
+                    this.state.lessons.splice(index, 1);
+                    this.saveState();
+                    this.renderAdminLessons();
+                    this.renderLessonsList();
+                    this.showNotification('Sucesso', 'Lição excluída', 'success');
+                }
+            },
+
+            clearLessonForm: function() {
+                document.getElementById('lessonTitle').value = '';
+                document.getElementById('lessonEnglishInput').value = '';
+                document.getElementById('lessonPortugueseInput').value = '';
+                document.getElementById('lessonTipsInput').value = '';
+                delete document.getElementById('lessonTitle').dataset.editIndex;
+                document.getElementById('lessonPreview').style.display = 'none';
+            },
+
+            loadSettingsForm: function() {
+                document.getElementById('apiToken').value = this.resembleConfig.apiKey;
+                document.getElementById('synthesisEndpoint').value = this.resembleConfig.synthesisEndpoint;
+                document.getElementById('institutionName').value = this.state.settings.institutionName;
+                document.getElementById('defaultLanguage').value = this.state.settings.defaultLanguage;
+                document.getElementById('maxRecordingTime').value = this.state.settings.maxRecordingTime;
+                document.getElementById('autoAdvance').checked = this.state.settings.autoAdvance;
+            },
+
+            saveSettings: function() {
+                // Update Resemble.ai config
+                this.resembleConfig.apiKey = document.getElementById('apiToken').value;
+                this.resembleConfig.synthesisEndpoint = document.getElementById('synthesisEndpoint').value;
+                
+                // Update app settings
+                this.state.settings.institutionName = document.getElementById('institutionName').value;
+                this.state.settings.defaultLanguage = document.getElementById('defaultLanguage').value;
+                this.state.settings.maxRecordingTime = parseInt(document.getElementById('maxRecordingTime').value);
+                this.state.settings.autoAdvance = document.getElementById('autoAdvance').checked;
+                
+                this.saveState();
+                this.showNotification('Sucesso', 'Configurações salvas', 'success');
+            },
+
+            resetSettings: function() {
+                if (confirm('Restaurar configurações padrão?')) {
+                    this.resembleConfig = {
+                        apiKey: 'oGHRQvmNLSjt8HUSC8sguQtt',
+                        synthesisEndpoint: 'https://f.cluster.resemble.ai/synthesize',
+                        projectId: 'default',
+                        defaultVoice: 'en-US-1'
+                    };
+                    
+                    this.state.settings = {
+                        institutionName: 'VoiceLearn Academy',
+                        defaultLanguage: 'pt-BR',
+                        maxRecordingTime: 30,
+                        autoAdvance: true
+                    };
+                    
+                    this.loadSettingsForm();
+                    this.saveState();
+                    this.showNotification('Sucesso', 'Configurações restauradas', 'success');
+                }
+            },
+
+            testApiConnection: async function() {
+                try {
+                    const testBtn = document.querySelector('[onclick="VoiceLearn.testApiConnection()"]');
+                    const originalText = testBtn.innerHTML;
+                    testBtn.disabled = true;
+                    testBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Testando...';
+                    
+                    // Test the API by trying to get voices or make a simple request
+                    const response = await axios.post(this.resembleConfig.synthesisEndpoint, {
+                        data: {
+                            voice_uuid: this.resembleConfig.defaultVoice,
+                            project_uuid: this.resembleConfig.projectId,
+                            text: 'Test connection',
+                            format: 'mp3',
+                            sample_rate: 22050
+                        }
+                    }, {
+                        headers: {
+                            'Authorization': `Bearer ${this.resembleConfig.apiKey}`,
+                            'Content-Type': 'application/json'
+                        },
+                        timeout: 10000
+                    });
+                    
+                    this.state.apiStatus.connected = true;
+                    this.state.apiStatus.lastTest = new Date();
+                    this.updateApiStatus();
+                    
+                    testBtn.disabled = false;
+                    testBtn.innerHTML = originalText;
+                    
+                    this.showNotification('Conexão Testada', 'Resemble.ai API conectada com sucesso!', 'success');
+                    
+                } catch (error) {
+                    this.state.apiStatus.connected = false;
+                    this.updateApiStatus();
+                    
+                    const testBtn = document.querySelector('[onclick="VoiceLearn.testApiConnection()"]');
+                    testBtn.disabled = false;
+                    testBtn.innerHTML = '<i class="fas fa-plug"></i> Testar Conexão';
+                    
+                    this.showNotification('Erro de Conexão', 'Não foi possível conectar à Resemble.ai API', 'error');
+                }
+            },
+
+            resetProgress: function() {
+                if (confirm('Resetar todo o progresso? Isso irá marcar todas as lições como não concluídas.')) {
+                    this.state.lessons.forEach(lesson => lesson.completed = false);
+                    this.state.completedLessons = [];
+                    this.state.currentLesson = 0;
+                    this.saveState();
+                    this.renderLessonsList();
+                    this.updateStats();
+                    this.updateAdminStats();
+                    this.showNotification('Sucesso', 'Progresso resetado', 'success');
+                }
+            },
+
+            exportData: function() {
+                const data = {
+                    lessons: this.state.lessons,
+                    user: this.state.user,
+                    settings: this.state.settings,
+                    apiConfig: this.resembleConfig,
+                    stats: {
+                        completedLessons: this.state.completedLessons.length,
+                        totalLessons: this.state.lessons.length,
+                        progress: Math.round((this.state.completedLessons.length / this.state.lessons.length) * 100)
+                    }
+                };
+                
+                const dataStr = JSON.stringify(data, null, 2);
+                const dataBlob = new Blob([dataStr], { type: 'application/json' });
+                
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(dataBlob);
+                link.download = `voicelearn_data_${new Date().toISOString().split('T')[0]}.json`;
+                link.click();
+                
+                this.showNotification('Sucesso', 'Dados exportados', 'success');
+            },
+
+            // Utility Functions
+            updateStats: function() {
+                const completed = this.state.lessons.filter(l => l.completed).length;
+                const total = this.state.lessons.length;
+                const progress = Math.round((completed / total) * 100);
+                
+                document.getElementById('totalLessons').textContent = total;
+                document.getElementById('completedLessons').textContent = completed;
+                document.getElementById('progressPercent').textContent = progress + '%';
+                document.getElementById('practiceCount').textContent = this.state.currentPractice;
+            },
+
+            getCategoryName: function(category) {
+                const categories = {
+                    'greetings': 'Saudações',
+                    'restaurant': 'Restaurante',
+                    'travel': 'Viagens',
+                    'shopping': 'Compras',
+                    'work': 'Trabalho',
+                    'requests': 'Pedidos'
+                };
+                return categories[category] || category;
+            },
+
+            // Browser Speech Synthesis (Fallback)
+            speakWithBrowser: function(text) {
+                if ('speechSynthesis' in window) {
+                    speechSynthesis.cancel();
+                    
+                    const utterance = new SpeechSynthesisUtterance(text);
+                    utterance.lang = 'en-US';
+                    utterance.rate = 0.9;
+                    utterance.pitch = 1.0;
+                    utterance.volume = 1.0;
+                    
+                    const voices = speechSynthesis.getVoices();
+                    if (voices.length > 0) {
+                        const englishVoice = voices.find(voice => 
+                            voice.lang.includes('en') && voice.name.toLowerCase().includes('female')
+                        ) || voices.find(voice => voice.lang.includes('en')) || voices[0];
+                        
+                        if (englishVoice) {
+                            utterance.voice = englishVoice;
+                        }
+                    }
+                    
+                    speechSynthesis.speak(utterance);
+                    
+                    utterance.onend = () => {
+                        this.showNotification('Concluído', 'Pronúncia reproduzida', 'success');
+                    };
+                    
+                } else {
+                    this.showNotification('Aviso', 'Seu navegador não suporta síntese de voz.', 'warning');
+                }
+            },
+
+            // Notification System
+            showNotification: function(title, message, type = 'info') {
+                const notification = document.getElementById('notification');
+                const icon = document.getElementById('notification-icon');
+                const notifTitle = document.getElementById('notification-title');
+                const notifMessage = document.getElementById('notification-message');
+                
+                switch(type) {
+                    case 'success':
+                        icon.className = 'fas fa-check-circle';
+                        notification.className = 'notification success show';
+                        break;
+                    case 'error':
+                        icon.className = 'fas fa-exclamation-circle';
+                        notification.className = 'notification error show';
+                        break;
+                    case 'warning':
+                        icon.className = 'fas fa-exclamation-triangle';
+                        notification.className = 'notification warning show';
+                        break;
+                    default:
+                        icon.className = 'fas fa-info-circle';
+                        notification.className = 'notification show';
+                }
+                
+                notifTitle.textContent = title;
+                notifMessage.textContent = message;
+                
+                setTimeout(() => {
+                    notification.classList.remove('show');
+                }, 5000);
+            },
+
+            hideNotification: function() {
+                document.getElementById('notification').classList.remove('show');
+            }
+        };
+
+        // Initialize speech synthesis voices
+        if ('speechSynthesis' in window) {
+            speechSynthesis.getVoices();
+        }
+
+        // Initialize application when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            VoiceLearn.init();
+            
+            // Add keyboard shortcuts
+            document.addEventListener('keydown', function(e) {
+                if (e.ctrlKey || e.metaKey) {
+                    switch(e.key) {
+                        case 'ArrowLeft':
+                            VoiceLearn.prevLesson();
+                            break;
+                        case 'ArrowRight':
+                            VoiceLearn.nextLesson();
+                            break;
+                        case ' ':
+                            e.preventDefault();
+                            const activePage = document.querySelector('.page.active').id;
+                            if (activePage === 'lessons-page') {
+                                VoiceLearn.playLessonAudio();
+                            }
+                            break;
+                    }
+                }
+            });
+            
+            // Request microphone permission on practice page load
+            if ('mediaDevices' in navigator && 'getUserMedia' in navigator.mediaDevices) {
+                // Pre-request permission by trying to enumerate devices
+                navigator.mediaDevices.enumerateDevices()
+                    .then(devices => {
+                        console.log('Audio devices available:', devices);
+                    })
+                    .catch(err => {
+                        console.warn('Cannot enumerate devices:', err);
+                    });
+            }
+        });
+    </script>
+</body>
+</html>
